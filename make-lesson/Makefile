@@ -37,3 +37,7 @@ clean :
 variables:
 	@echo TEXT FILES: $(TEXT_FILES)
 	@echo DATA_FILES: $(DATA_FILES)
+## This is for help
+.PHONY : help
+help : Makefile
+	@sed -n 's/^##//p' $<
