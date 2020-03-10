@@ -1,22 +1,30 @@
-# Count words.
+include config.mk
 
-#Variables
-LANGUAGE=python
-COUNT_SRC=countwords.py
-COUNT_EXC=$(LANGUAGE) $(COUNT_SRC)
-ZPF_SRC=testzipf.py
-ZIPF_EXC=$(LANGUAGE) $(ZPF_SRC)
-DATA=*.dat
-results.txt : $(ZPF_SRC) isles.dat abyss.dat last.dat
-	$(ZIPF_EXC) *.dat > $@
+TEXT_FILES=$(wildcard books/books/*.txt)
+DATA_FILES=$(patsubst books/books/%.txt, %.dat,$(TEXT_FILES))
+#Generate summmery table
+
+results.txt : $(ZPF_SRC) $(DATA_FILES)
+	$(ZIPF_EXC) $(DATA_FILES) > $@
 	
-	
-.PONY : dats
-dats : isles.dat abyss.dat last.dat
+#Count words
+.PHONY : dats
+dats : $(DATA_FILES)
 
-%.dat : books/%.txt countwords.py
-	$(COUNT_EXC) $< $*.dat
+%.dat : books/books/%.txt $(COUNT_SRC)
+	$(COUNT_EXC) $< $@
 
-.PONY : clean
+.PHONY : variables
+variables:
+        @echo TEXT FILES: $(TEXT_FILES)
+        @echo DATA_FILES: $(DATA_FILES)
+
+.PHONY : clean
 clean : 
-	rm -f *.dat results.txt
+	rm -f $(DATA_FILES)
+	rm -f results.txt
+
+.PHONY : variables
+variables:
+	@echo TEXT FILES: $(TEXT_FILES)
+	@echo DATA_FILES: $(DATA_FILES)
