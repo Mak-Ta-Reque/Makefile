@@ -2,10 +2,18 @@ include config.mk
 
 TEXT_FILES=$(wildcard books/books/*.txt)
 DATA_FILES=$(patsubst books/books/%.txt, %.dat,$(TEXT_FILES))
+PNG_FILES=$(patsubst books/books/%.txt, %.png,$(TEXT_FILES))
 #Generate summmery table
+all : results.txt pngs
 
 results.txt : $(ZPF_SRC) $(DATA_FILES)
 	$(ZIPF_EXC) $(DATA_FILES) > $@
+
+%.png : %.dat plotcounts.py
+	$(LANGUAGE) plotcounts.py $< $@
+
+.PHONY : pngs
+pngs : $(PNG_FILES)
 	
 #Count words
 .PHONY : dats
@@ -23,6 +31,7 @@ variables:
 clean : 
 	rm -f $(DATA_FILES)
 	rm -f results.txt
+	rm -f $(PNG_FILES)
 
 .PHONY : variables
 variables:
